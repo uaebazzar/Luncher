@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luncher Hack | Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GLOBAL RESET & THEME --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Ambient Background Glow (Green) */
+        .glow-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(102, 255, 102, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- HERO SECTION (Minimalist) --- */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #ffffff, #aaaaaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #888;
+            max-width: 500px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* --- BUTTON BASE STYLES --- */
+        button {
+            cursor: pointer;
+            transition: 0.5s ease;
+            user-select: none;
+            outline: none;
+        }
+
+        /* --- MAIN ACTION BUTTON (#btn: PERMANENT GLOW) --- */
+        #btn {
+            padding: 15px 35px;
+            text-transform: uppercase;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 500;
+            margin: 20px 0;
+            
+            /* Permanent Glow Styling */
+            background: #008cff;
+            border: 1px solid #008cff;
+            color: #ffffff; 
+            text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
+            box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff,
+              0 0 100px #008cff;
+            transform: translateY(-2px); 
+        }
+
+        #btn:hover {
+            opacity: 0.9;
+        }
+
+        /* --- TOP RIGHT LOGOUT BUTTON CONTAINER --- */
+        .logout-container {
+            position: fixed; /* Use fixed so it stays in the corner */
+            top: 30px;
+            right: 30px;
+            z-index: 10;
+        }
+
+        /* --- LOGOUT BUTTON STYLES (.Btn) --- */
+        .Btn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition-duration: .3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+            background-color: rgb(255, 65, 65); /* Red color */
+        }
+
+        /* Icon container */
+        .sign {
+            width: 100%;
+            transition-duration: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sign svg {
+            width: 17px;
+        }
+
+        .sign svg path {
+            fill: white;
+        }
+
+        /* Text (hidden initially) */
+        .text {
+            position: absolute;
+            right: 0%;
+            width: 0%;
+            opacity: 0;
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition-duration: .3s;
+        }
+
+        /* Hover effect on button width */
+        .Btn:hover {
+            width: 125px;
+            border-radius: 40px;
+            transition-duration: .3s;
+        }
+
+        .Btn:hover .sign {
+            width: 30%;
+            transition-duration: .3s;
+            padding-left: 20px;
+        }
+
+        /* Hover effect button's text */
+        .Btn:hover .text {
+            opacity: 1;
+            width: 70%;
+            transition-duration: .3s;
+            padding-right: 10px;
+        }
+
+        /* button click effect*/
+        .Btn:active {
+            transform: translate(2px ,2px);
+        }
+
+        /* --- UTILS --- */
+        .status-badge {
+            background: rgba(102, 255, 102, 0.1);
+            color: #66ff66;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+            border: 1px solid rgba(102, 255, 102, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            #btn { padding: 12px 25px; font-size: 15px; }
+            .logout-container { top: 20px; right: 20px; }
+        }
+        
+        /* Spinner Animation */
+        .dot-spinner {
+          --uib-size: 2.8rem;
+          --uib-speed: .9s;
+          --uib-color: #183153;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          height: var(--uib-size);
+          width: var(--uib-size);
+        }
+
+        .dot-spinner__dot {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          height: 100%;
+          width: 100%;
+        }
+
+        .dot-spinner__dot::before {
+          content: '';
+          height: 20%;
+          width: 20%;
+          border-radius: 50%;
+          background-color: var(--uib-color);
+          transform: scale(0);
+          opacity: 0.5;
+          animation: pulse0112 calc(var(--uib-speed) * 1.111) ease-in-out infinite;
+          box-shadow: 0 0 20px rgba(18, 31, 53, 0.3);
+        }
+
+        .dot-spinner__dot:nth-child(2) {
+          transform: rotate(45deg);
+        }
+
+        .dot-spinner__dot:nth-child(2)::before {
+          animation-delay: calc(var(--uib-speed) * -0.875);
+        }
+
+        .dot-spinner__dot:nth-child(3) {
+          transform: rotate(90deg);
+        }
+
+        .dot-spinner__dot:nth-child(3)::before {
+          animation-delay: calc(var(--uib-speed) * -0.75);
+        }
+
+        .dot-spinner__dot:nth-child(4) {
+          transform: rotate(135deg);
+        }
+
+        .dot-spinner__dot:nth-child(4)::before {
+          animation-delay: calc(var(--uib-speed) * -0.625);
+        }
+
+        .dot-spinner__dot:nth-child(5) {
+          transform: rotate(180deg);
+        }
+
+        .dot-spinner__dot:nth-child(5)::before {
+          animation-delay: calc(var(--uib-speed) * -0.5);
+        }
+
+        .dot-spinner__dot:nth-child(6) {
+          transform: rotate(225deg);
+        }
+
+        .dot-spinner__dot:nth-child(6)::before {
+          animation-delay: calc(var(--uib-speed) * -0.375);
+        }
+
+        .dot-spinner__dot:nth-child(7) {
+          transform: rotate(270deg);
+        }
+
+        .dot-spinner__dot:nth-child(7)::before {
+          animation-delay: calc(var(--uib-speed) * -0.25);
+        }
+
+        .dot-spinner__dot:nth-child(8) {
+          transform: rotate(315deg);
+        }
+
+        .dot-spinner__dot:nth-child(8)::before {
+          animation-delay: calc(var(--uib-speed) * -0.125);
+        }
+
+        @keyframes pulse0112 {
+          0%,
+          100% {
+            transform: scale(0);
+            opacity: 0.5;
+          }
+
+          50% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+        
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-bg"></div>
+
+    <div class="logout-container">
+        <button class="Btn" id="logoutBtn">
+            <div class="sign">
+                <svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg>
+            </div>
+            <div class="text">Logout</div>
+        </button>
+    </div>
+
+    <div class="hero">
+        <div class="status-badge">● SYSTEM READY</div>
+        <h1>Dominate the Game<br>with Precision.</h1>
+        <p>Click the button to copy your license key and initialize the system.</p>
+
+        <button id="btn">Copy Password</button>
+        
+    </div>
+    
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+            <div class="loading-text" id="loadingText">Processing...</div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrgosj2hRdEHg01kGcEiXaNEyfoNxHEtk",
+            authDomain: "luncherteam-93163.firebaseapp.com",
+            projectId: "luncherteam-93163",
+            storageBucket: "luncherteam-93163.firebasestorage.app",
+            messagingSenderId: "862413255598",
+            appId: "1:862413255598:web:b5e358a9d5f6f79b328e3f",
+            measurementId: "G-JKDYYKERW9"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Check if user is authenticated when page loads
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // User is not signed in, redirect to login page
+                console.log("No user signed in, redirecting to login page");
+                window.location.href = 'index.html';
+            } else {
+                console.log("User is signed in:", user.email);
+            }
+        });
+        
+        // Main button functionality to copy SHNTEAM
+        document.getElementById('btn').addEventListener('click', function() {
+            const button = this;
+            const originalText = button.innerText;
+            const codeToCopy = 'SHNTEAM'; 
+
+            // Copy SHNTEAM to clipboard
+            navigator.clipboard.writeText(codeToCopy).then(function() {
+                // Change button text to "COPIED"
+                button.innerText = 'COPIED!';
+                
+                // Revert back to original text after 2 seconds
+                setTimeout(function() {
+                    button.innerText = originalText;
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                alert('Copying failed! Please copy this manually: ' + codeToCopy);
+            });
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            console.log("Logout button clicked");
+            // Show loading overlay
+            document.getElementById('loadingText').textContent = 'Logging out...';
+            document.getElementById('loadingOverlay').classList.add('show');
+            console.log("Showing loading overlay for logout");
+            
+            signOut(auth).then(() => {
+                // Show loading for 2 seconds before redirecting
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }).catch((error) => {
+                // Hide loading overlay on error
+                document.getElementById('loadingOverlay').classList.remove('show');
+                console.log("Hiding loading overlay due to error");
+                
+                // An error happened
+                console.error('Logout error:', error);
+                alert('Logout failed: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
