@@ -398,15 +398,23 @@
         const auth = getAuth(app);
         
         // Check if user is authenticated when page loads
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                // User is not signed in, redirect to login page
-                console.log("No user signed in, redirecting to login page");
-                window.location.href = 'index.html';
-            } else {
-                console.log("User is signed in:", user.email);
-            }
-        });
+        // Add a small delay to ensure Firebase is fully initialized
+        setTimeout(() => {
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    // User is not signed in, redirect to login page
+                    console.log("No user signed in, redirecting to login page");
+                    window.location.href = 'index.html';
+                } else {
+                    console.log("User is signed in:", user.email);
+                    // Hide any loading overlay if it was shown
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.remove('show');
+                    }
+                }
+            });
+        }, 100);
         
         // Function to handle logout
         function handleLogout() {
