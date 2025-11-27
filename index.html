@@ -616,10 +616,10 @@
             
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    // Show loading for 2 seconds before redirecting
+                    // Reduce delay to 1 second for better UX
                     setTimeout(() => {
                         window.location.href = "home.html";
-                    }, 2000);
+                    }, 1000);
                 })
                 .catch((error) => {
                     // Hide loading overlay on error
@@ -667,10 +667,10 @@
                         const user = userCredential.user;
                         console.log("User created:", user);
                         
-                        // Show loading for 2 seconds before redirecting
+                        // Reduce delay to 1 second for better UX
                         setTimeout(() => {
                             window.location.href = "home.html";
-                        }, 2000);
+                        }, 1000);
                     })
                     .catch((error) => {
                         // Hide loading overlay on error
@@ -691,10 +691,10 @@
                         const user = userCredential.user;
                         console.log("User signed in:", user);
                         
-                        // Show loading for 2 seconds before redirecting
+                        // Reduce delay to 1 second for better UX
                         setTimeout(() => {
                             window.location.href = "home.html";
-                        }, 2000);
+                        }, 1000);
                     })
                     .catch((error) => {
                         // Hide loading overlay on error
